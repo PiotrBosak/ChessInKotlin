@@ -4,12 +4,10 @@ import Color
 import chess.pieces.Piece
 
 class Tile(color: Color, column: Int, row: Int, val startingPiece: Piece?) {
+    var currentPiece = startingPiece
     val row = validateRow(row)
     val column = validateColumn(column)
     val color: Color = validateColor(color, row, column)
-    private fun validateColumn(column: Int): Int {
-        return if (column in 1..8) column else throw IllegalTileException()
-    }
 
 
     private fun validateColor(color: Color, row: Int, column: Int): Color {
@@ -27,8 +25,14 @@ class Tile(color: Color, column: Int, row: Int, val startingPiece: Piece?) {
     private fun validateRow(row: Int): Int {
         return if (row in 1..8) row else throw IllegalTileException()
     }
+    private fun validateColumn(column: Int): Int {
+        return if (column in 1..8) column else throw IllegalTileException()
+    }
+    fun hasPiece():Boolean = currentPiece != null
+    fun hasStartingPiece() = currentPiece === startingPiece
 
-    val currentPiece: Piece? = startingPiece
+
+
 
 
 }

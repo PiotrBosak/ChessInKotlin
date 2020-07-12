@@ -74,7 +74,7 @@ object BoardFactory {
     }
 
     private fun createTileWithWhiteQueen(): Tile {
-        return Tile(Color.WHITE, 4, 1, King(Color.WHITE))
+        return Tile(Color.WHITE, 4, 1, Queen(Color.WHITE))
     }
 
 
@@ -104,12 +104,12 @@ object BoardFactory {
 
     private fun createTilesWithWhitePawns(): List<Tile> {
         val mutableList = mutableListOf<Tile>()
-        val row = 1
+        val row = 2
         for (column in 1..8)
             if ((row + column) % 2 == 0)
-                mutableList.add(Tile(Color.BLACK, column, row, Pawn(Color.BLACK)))
+                mutableList.add(Tile(Color.BLACK, column, row, Pawn(Color.WHITE)))
             else
-                mutableList.add(Tile(Color.WHITE, column, row, Pawn(Color.BLACK)))
+                mutableList.add(Tile(Color.WHITE, column, row, Pawn(Color.WHITE)))
 
         return mutableList
     }
