@@ -1,5 +1,6 @@
 package chess.rules
 
+import chess.board.Board
 import chess.board.Tile
 import chess.pieces.Bishop
 import chess.pieces.Piece
@@ -8,18 +9,18 @@ import chess.rules.exceptions.WrongRuleException
 
 object BishopRules : Rules {
 
-    override fun calculatePossibleMoves(row: Int, column: Int): List<Tile> {
+    override fun calculatePossibleMoves(row: Int, column: Int, board: Board): List<Tile> {
         val currentTile = board.getTile(row, column) ?: return emptyList()
         val nullablePiece = currentTile.currentPiece
         validatePiece(nullablePiece)
-        return getPossibleMoves(currentTile)
+        return getPossibleMoves(currentTile, board)
     }
 
-    override fun calculatePossibleAttacks(row: Int, column: Int): List<Tile> {
+    override fun calculatePossibleAttacks(row: Int, column: Int, board: Board): List<Tile> {
         val currentTile = board.getTile(row, column) ?: return emptyList()
         val nullablePiece = currentTile.currentPiece
         validatePiece(nullablePiece)
-        return getPossibleAttacks(currentTile)
+        return getPossibleAttacks(currentTile, board)
     }
 
     override fun validatePiece(piece: Piece?) {
@@ -29,17 +30,17 @@ object BishopRules : Rules {
             throw WrongRuleException()
     }
 
-     fun getPossibleMoves(tile: Tile): List<Tile> {
-        return topRightPositionsMoves(tile) + topLeftPositionsMoves(tile) +
-                downLeftPositionsMoves(tile) + downRightPositionsMoves(tile)
+    fun getPossibleMoves(tile: Tile, board: Board): List<Tile> {
+        return topRightPositionsMoves(tile, board) + topLeftPositionsMoves(tile, board) +
+                downLeftPositionsMoves(tile, board) + downRightPositionsMoves(tile, board)
     }
 
-     fun getPossibleAttacks(tile: Tile): List<Tile> {
-        return mutableListOf(topLeftPositionsAttacks(tile), topRightPositionsAttacks(tile),
-                downLeftPositionsAttacks(tile), downRightPositionsAttacks(tile)).filterNotNull()
+    fun getPossibleAttacks(tile: Tile, board: Board): List<Tile> {
+        return mutableListOf(topLeftPositionsAttacks(tile, board), topRightPositionsAttacks(tile, board),
+                downLeftPositionsAttacks(tile, board), downRightPositionsAttacks(tile, board)).filterNotNull()
     }
 
-    private fun topLeftPositionsAttacks(tile: Tile): Tile? {
+    private fun topLeftPositionsAttacks(tile: Tile, board: Board): Tile? {
         for (i in (1..8)) {
             val currentTile = board.getTile(tile.row + i, tile.column - i)
             if (currentTile == null)
@@ -53,7 +54,7 @@ object BishopRules : Rules {
         return null
     }
 
-    private fun topRightPositionsAttacks(tile: Tile): Tile? {
+    private fun topRightPositionsAttacks(tile: Tile, board: Board): Tile? {
         for (i in (1..8)) {
             val currentTile = board.getTile(tile.row + i, tile.column + i)
             if (currentTile == null)
@@ -68,7 +69,7 @@ object BishopRules : Rules {
 
     }
 
-    private fun downLeftPositionsAttacks(tile: Tile): Tile? {
+    private fun downLeftPositionsAttacks(tile: Tile, board: Board): Tile? {
         for (i in (1..8)) {
             val currentTile = board.getTile(tile.row - i, tile.column - i)
             if (currentTile == null)
@@ -83,7 +84,7 @@ object BishopRules : Rules {
 
     }
 
-    private fun downRightPositionsAttacks(tile: Tile): Tile? {
+    private fun downRightPositionsAttacks(tile: Tile, board: Board): Tile? {
         for (i in (1..8)) {
             val currentTile = board.getTile(tile.row - i, tile.column + i)
             if (currentTile == null)
@@ -99,7 +100,7 @@ object BishopRules : Rules {
     }
 
 
-    private fun topLeftPositionsMoves(tile: Tile): List<Tile> {
+    private fun topLeftPositionsMoves(tile: Tile, board: Board): List<Tile> {
         val list = mutableListOf<Tile>()
         for (i in (1..8)) {
             val currentTile = board.getTile(tile.row + i, tile.column - i)
@@ -112,7 +113,7 @@ object BishopRules : Rules {
 
     }
 
-    private fun topRightPositionsMoves(tile: Tile): List<Tile> {
+    private fun topRightPositionsMoves(tile: Tile, board: Board): List<Tile> {
         val list = mutableListOf<Tile>()
         for (i in (1..8)) {
             val currentTile = board.getTile(tile.row + i, tile.column + i)
@@ -124,7 +125,7 @@ object BishopRules : Rules {
         return list
     }
 
-    private fun downLeftPositionsMoves(tile: Tile): List<Tile> {
+    private fun downLeftPositionsMoves(tile: Tile, board: Board): List<Tile> {
         val list = mutableListOf<Tile>()
         for (i in (1..8)) {
             val currentTile = board.getTile(tile.row - i, tile.column - i)
@@ -136,7 +137,7 @@ object BishopRules : Rules {
         return list
     }
 
-    private fun downRightPositionsMoves(tile: Tile): List<Tile> {
+    private fun downRightPositionsMoves(tile: Tile, board: Board): List<Tile> {
         val list = mutableListOf<Tile>()
         for (i in (1..8)) {
             val currentTile = board.getTile(tile.row - i, tile.column + i)
