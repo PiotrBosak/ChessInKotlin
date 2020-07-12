@@ -25,14 +25,19 @@ class Tile(color: Color, column: Int, row: Int, val startingPiece: Piece?) {
     private fun validateRow(row: Int): Int {
         return if (row in 1..8) row else throw IllegalTileException()
     }
+
     private fun validateColumn(column: Int): Int {
         return if (column in 1..8) column else throw IllegalTileException()
     }
-    fun hasPiece():Boolean = currentPiece != null
+
+    fun isEmpty(): Boolean = currentPiece == null
+    fun hasPiece(): Boolean = currentPiece != null
     fun hasStartingPiece() = currentPiece === startingPiece
 
+    companion object {
 
+        fun isRowAndColumnValid(row: Int, column: Int): Boolean = (row in 1..8 && column in 1..8).not()
 
-
+    }
 
 }

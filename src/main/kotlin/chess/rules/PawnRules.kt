@@ -1,19 +1,21 @@
 package chess.rules
 
 import Color.*
+import chess.board.Board
 import chess.board.Tile
 import chess.pieces.Pawn
 import chess.pieces.Piece
 import chess.rules.exceptions.EmptyTileException
 import chess.rules.exceptions.WrongRuleException
 
-class PawnRules : Rules {
+object PawnRules : Rules {
     override fun calculatePossibleMoves(row: Int, column: Int): List<Tile> {
         return listOfNotNull(twoTileMove(row, column), regularMove(row, column))
     }
 
     override fun calculatePossibleAttacks(row: Int, column: Int): List<Tile> {
-        TODO("Not yet implemented")
+        return regularAttacks(row, column).filterNotNull()
+        //stil haven't added lePassant(maybe history of the game is needed)
     }
 
     private fun twoTileMove(row: Int, column: Int): Tile? {
@@ -39,8 +41,18 @@ class PawnRules : Rules {
         else null
     }
 
-    private fun regularAttacks(row: Int, column: Int): Set<Tile> {
-        return emptySet()
+    private fun regularAttacks(row: Int, column: Int): List<Tile?> {
+        val mutableList = mutableListOf<Tile?>()
+        val currentTile = board.getTile(row, column) ?: return emptyList()
+        validatePiece(currentTile.currentPiece)
+        val nextRow = if (currentTile.currentPiece!!.color == WHITE) 1 else -1
+        val firstColumn = -1
+        val secondColumn = 1
+        if (canAttack(currentTile, nextRow, firstColumn))
+            mutableList.add(board.getTile(currentTile.row + nextRow, currentTile.column + firstColumn))
+        if (canAttack(currentTile, nextRow, secondColumn))
+            mutableList.add(board.getTile(currentTile.row + nextRow, currentTile.column + secondColumn))
+        return mutableList
     }
 
     override fun validatePiece(piece: Piece?) {
@@ -61,5 +73,11 @@ class PawnRules : Rules {
         val firstNextRow = if (tile.currentPiece!!.color == WHITE) 1 else -1
         val firstNextTile = board.tiles.first { it.row == tile.row + firstNextRow && it.column == tile.column }
         return firstNextTile.currentPiece == null
+    }
+
+    private fun canAttack(tile: Tile, nextRow: Int, nextColumn: Int): Boolean {
+        val attackedTile = board.getTile(tile.row + nextRow, tile.column + nextColumn) ?: return false
+        return attackedTile.currentPiece != null &&
+                attackedTile.currentPiece!!.color != tile.currentPiece!!.color
     }
 }
