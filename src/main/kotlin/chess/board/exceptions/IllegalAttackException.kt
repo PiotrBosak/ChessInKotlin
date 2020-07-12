@@ -1,4 +1,4 @@
-package chess.board
+package chess.board.exceptions
 
 import java.lang.RuntimeException
 

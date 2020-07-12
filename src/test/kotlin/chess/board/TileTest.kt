@@ -1,6 +1,7 @@
 package chess.board
 
 import Color
+import chess.board.exceptions.IllegalTileException
 import chess.pieces.Pawn
 import org.junit.jupiter.api.Test
 import kotlin.test.assertFailsWith

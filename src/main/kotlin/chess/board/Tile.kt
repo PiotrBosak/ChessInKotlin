@@ -1,6 +1,7 @@
 package chess.board
 
 import Color
+import chess.board.exceptions.IllegalTileException
 import chess.pieces.Piece
 
 class Tile(color: Color, column: Int, row: Int, val startingPiece: Piece?) {
@@ -13,7 +14,7 @@ class Tile(color: Color, column: Int, row: Int, val startingPiece: Piece?) {
     private fun validateColor(color: Color, row: Int, column: Int): Color {
         if (isColorValid(row, column, color))
             return color
-        else throw IllegalTileException()
+        else throw IllegalTileException
     }
 
     private fun isColorValid(row: Int, column: Int, color: Color): Boolean {
@@ -23,11 +24,11 @@ class Tile(color: Color, column: Int, row: Int, val startingPiece: Piece?) {
     }
 
     private fun validateRow(row: Int): Int {
-        return if (row in 1..8) row else throw IllegalTileException()
+        return if (row in 1..8) row else throw IllegalTileException
     }
 
     private fun validateColumn(column: Int): Int {
-        return if (column in 1..8) column else throw IllegalTileException()
+        return if (column in 1..8) column else throw IllegalTileException
     }
 
     fun isEmpty(): Boolean = currentPiece == null

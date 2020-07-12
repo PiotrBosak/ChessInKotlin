@@ -1,5 +1,7 @@
 package chess.board
 
+import chess.board.exceptions.IllegalAttackException
+import chess.board.exceptions.IllegalMoveException
 import chess.pieces.*
 import chess.rules.*
 import java.lang.RuntimeException
