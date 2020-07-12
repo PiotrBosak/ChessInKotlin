@@ -19,6 +19,9 @@ object RookRules : Rules {
         validatePiece(currentTile.currentPiece)
         return getPossibleAttacks(currentTile, board)
     }
+    fun getPossibleMoves(tile: Tile, board: Board): List<Tile> {
+        return getLeftMoves(tile, board) + getRightMoves(tile, board) + getTopMoves(tile, board) + getDownMoves(tile, board)
+    }
 
     fun getPossibleAttacks(tile: Tile, board: Board): List<Tile> {
         return listOfNotNull(getDownAttack(tile, board), getTopAttack(tile, board),
@@ -88,9 +91,7 @@ object RookRules : Rules {
             throw WrongRuleException()
     }
 
-    fun getPossibleMoves(tile: Tile, board: Board): List<Tile> {
-        return getLeftMoves(tile, board) + getRightMoves(tile, board) + getTopMoves(tile, board) + getDownMoves(tile, board)
-    }
+
 
     private fun getDownMoves(tile: Tile, board: Board): List<Tile> {
         val list = mutableListOf<Tile>()

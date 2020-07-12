@@ -20,7 +20,7 @@ object QueenRules : Rules {
     override fun calculatePossibleMoves(row: Int, column: Int,board:Board): List<Tile> {
         val currentTile = board.getTile(row, column) ?: return emptyList()
         val nullablePiece = currentTile.currentPiece
-        BishopRules.validatePiece(nullablePiece)
+        validatePiece(nullablePiece)
         return RookRules.getPossibleMoves(currentTile,board) + BishopRules.getPossibleMoves(currentTile,board)
     }
 
