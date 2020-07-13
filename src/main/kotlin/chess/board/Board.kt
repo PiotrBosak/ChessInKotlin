@@ -11,6 +11,8 @@ class Board {
     fun getTile(row: Int, column: Int) = tiles.firstOrNull { it.row == row && it.column == column }
 
 
+    //maybe make makeMove and makeAttack return boolean so that if the move is not possible you return false,
+    //todo remember to add checking whether the move is legal in terms of mate
     fun makeMove(startingTile: Tile, destinationTile: Tile) {
         val moves = getAppropriateMoves(startingTile)
         if (moves.contains(destinationTile).not())
@@ -29,20 +31,22 @@ class Board {
 
     private fun getAppropriateMoves(tile: Tile): List<Tile> {
         return when (tile.currentPiece) {
-            is Pawn -> PawnRules.calculatePossibleMoves(tile.row, tile.column,this)
-            is Rook -> RookRules.calculatePossibleMoves(tile.row, tile.column,this)
-            is Bishop -> BishopRules.calculatePossibleMoves(tile.row, tile.column,this)
-            is Queen -> QueenRules.calculatePossibleMoves(tile.row, tile.column,this)
+            is Pawn -> PawnRules.calculatePossibleMoves(tile.row, tile.column, this)
+            is Rook -> RookRules.calculatePossibleMoves(tile.row, tile.column, this)
+            is Bishop -> BishopRules.calculatePossibleMoves(tile.row, tile.column, this)
+            is Queen -> QueenRules.calculatePossibleMoves(tile.row, tile.column, this)
+            is Knight -> KnightRules.calculatePossibleMoves(tile.row, tile.column, this)
             else -> throw RuntimeException("not finished yet")
         }
     }
 
     private fun getAppropriateAttacks(tile: Tile): List<Tile> {
         return when (tile.currentPiece) {
-            is Pawn -> PawnRules.calculatePossibleAttacks(tile.row, tile.column,this)
-            is Rook -> RookRules.calculatePossibleAttacks(tile.row, tile.column,this)
-            is Bishop -> BishopRules.calculatePossibleAttacks(tile.row, tile.column,this)
-            is Queen -> QueenRules.calculatePossibleAttacks(tile.row, tile.column,this)
+            is Pawn -> PawnRules.calculatePossibleAttacks(tile.row, tile.column, this)
+            is Rook -> RookRules.calculatePossibleAttacks(tile.row, tile.column, this)
+            is Bishop -> BishopRules.calculatePossibleAttacks(tile.row, tile.column, this)
+            is Queen -> QueenRules.calculatePossibleAttacks(tile.row, tile.column, this)
+            is Knight -> KnightRules.calculatePossibleAttacks(tile.row, tile.column, this)
             else -> throw RuntimeException("not finished yet")
         }
     }
