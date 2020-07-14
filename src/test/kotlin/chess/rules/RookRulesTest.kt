@@ -1,7 +1,6 @@
 package chess.rules
 
 import chess.board.Board
-import chess.pieces.Rook
 import chess.rules.exceptions.EmptyTileException
 import chess.rules.exceptions.WrongRuleException
 import org.junit.jupiter.api.BeforeEach
@@ -45,9 +44,9 @@ class RookRulesTest {
         val rookSecondDest = board.getTile(3, 8) ?: throw RuntimeException()
         val pawnStartingTile = board.getTile(2, 1) ?: throw RuntimeException()
         val pawnDestTile = board.getTile(4, 1) ?: throw RuntimeException()
-        board.makeMove(pawnStartingTile, pawnDestTile)
-        board.makeMove(rookStartingTile, rookFirstDest)
-        board.makeMove(rookFirstDest, rookSecondDest)
+        board.makeMoveWithoutCheckingMate(pawnStartingTile, pawnDestTile)
+        board.makeMoveWithoutCheckingMate(rookStartingTile, rookFirstDest)
+        board.makeMoveWithoutCheckingMate(rookFirstDest, rookSecondDest)
         val moves = rookRules.calculatePossibleMoves(rookSecondDest.row, rookSecondDest.column, board)
         assertEquals(10, moves.size)
     }
@@ -59,9 +58,9 @@ class RookRulesTest {
         val rookSecondDest = board.getTile(6, 4) ?: throw RuntimeException()
         val pawnStartingTile = board.getTile(7, 8) ?: throw RuntimeException()
         val pawnDestTile = board.getTile(5, 8) ?: throw RuntimeException()
-        board.makeMove(pawnStartingTile, pawnDestTile)
-        board.makeMove(rookStartingTile, rookFirstDest)
-        board.makeMove(rookFirstDest, rookSecondDest)
+        board.makeMoveWithoutCheckingMate(pawnStartingTile, pawnDestTile)
+        board.makeMoveWithoutCheckingMate(rookStartingTile, rookFirstDest)
+        board.makeMoveWithoutCheckingMate(rookFirstDest, rookSecondDest)
         val moves = rookRules.calculatePossibleMoves(rookSecondDest.row, rookSecondDest.column, board)
         assertEquals(10, moves.size)
     }
@@ -78,9 +77,9 @@ class RookRulesTest {
         val pawnStartingTile = board.getTile(2, 1) ?: throw RuntimeException()
         val pawnDestTile = board.getTile(4, 1) ?: throw RuntimeException()
 
-        board.makeMove(pawnStartingTile, pawnDestTile)
-        board.makeMove(rookStartingTile, rookFirstDest)
-        board.makeMove(rookFirstDest, rookSecondDest)
+        board.makeMoveWithoutCheckingMate(pawnStartingTile, pawnDestTile)
+        board.makeMoveWithoutCheckingMate(rookStartingTile, rookFirstDest)
+        board.makeMoveWithoutCheckingMate(rookFirstDest, rookSecondDest)
         board.makeAttack(rookSecondDest, rookThirdDest)
         board.makeAttack(rookThirdDest, rookFourthDest)
         board.makeAttack(rookFourthDest, rookFifthDest)

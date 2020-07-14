@@ -5,7 +5,6 @@ import chess.rules.exceptions.EmptyTileException
 import chess.rules.exceptions.WrongRuleException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.lang.Exception
 import java.lang.RuntimeException
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -44,7 +43,7 @@ class PawnRulesTest {
     fun whenMovePawnOnce_NextOneMoveAvailable() {
         val startingTile = board.getTile(2, 1) ?: throw RuntimeException()
         val destinationTile = board.getTile(3, 1) ?: throw RuntimeException()
-        board.makeMove(startingTile, destinationTile)
+        board.makeMoveWithoutCheckingMate(startingTile, destinationTile)
         val moves = PawnRules.calculatePossibleMoves(destinationTile.row, destinationTile.column, board)
         assertEquals(1, moves.size)
     }
@@ -53,7 +52,7 @@ class PawnRulesTest {
     fun whenMovePawnTwoTiles_NextOneMoveAvailable() {
         val startingTile = board.getTile(2, 1) ?: throw RuntimeException()
         val destinationTile = board.getTile(4, 1) ?: throw RuntimeException()
-        board.makeMove(startingTile, destinationTile)
+        board.makeMoveWithoutCheckingMate(startingTile, destinationTile)
         val moves = PawnRules.calculatePossibleMoves(destinationTile.row, destinationTile.column, board)
         assertEquals(1, moves.size)
     }
@@ -62,11 +61,11 @@ class PawnRulesTest {
     fun movePawn3Times() {
         val startingTile = board.getTile(2, 1) ?: throw RuntimeException()
         val firstDest = board.getTile(4, 1) ?: throw RuntimeException()
-        board.makeMove(startingTile, firstDest)
+        board.makeMoveWithoutCheckingMate(startingTile, firstDest)
         val secondDest = board.getTile(5, 1) ?: throw RuntimeException()
-        board.makeMove(firstDest, secondDest)
+        board.makeMoveWithoutCheckingMate(firstDest, secondDest)
         val thirdDest = board.getTile(6, 1) ?: throw RuntimeException()
-        board.makeMove(secondDest, thirdDest)
+        board.makeMoveWithoutCheckingMate(secondDest, thirdDest)
         val moves = PawnRules.calculatePossibleMoves(6, 1, board)
         assertEquals(0, moves.size)
     }
@@ -76,11 +75,11 @@ class PawnRulesTest {
         val startingTile = board.getTile(2, 1) ?: throw RuntimeException()
         val startingPiece = startingTile.currentPiece
         val firstDest = board.getTile(4, 1) ?: throw RuntimeException()
-        board.makeMove(startingTile, firstDest)
+        board.makeMoveWithoutCheckingMate(startingTile, firstDest)
         val secondDest = board.getTile(5, 1) ?: throw RuntimeException()
-        board.makeMove(firstDest, secondDest)
+        board.makeMoveWithoutCheckingMate(firstDest, secondDest)
         val thirdDest = board.getTile(6, 1) ?: throw RuntimeException()
-        board.makeMove(secondDest, thirdDest)
+        board.makeMoveWithoutCheckingMate(secondDest, thirdDest)
         val fourthDest = board.getTile(7, 2) ?: throw RuntimeException()
         board.makeAttack(thirdDest, fourthDest)
         assertTrue { fourthDest.currentPiece == startingPiece }
@@ -91,11 +90,11 @@ class PawnRulesTest {
         val startingTile = board.getTile(7, 3) ?: throw RuntimeException()
         val startingPiece = startingTile.currentPiece
         val firstDest = board.getTile(5, 3) ?: throw RuntimeException()
-        board.makeMove(startingTile, firstDest)
+        board.makeMoveWithoutCheckingMate(startingTile, firstDest)
         val secondDest = board.getTile(4, 3) ?: throw RuntimeException()
-        board.makeMove(firstDest, secondDest)
+        board.makeMoveWithoutCheckingMate(firstDest, secondDest)
         val thirdDest = board.getTile(3, 3) ?: throw RuntimeException()
-        board.makeMove(secondDest, thirdDest)
+        board.makeMoveWithoutCheckingMate(secondDest, thirdDest)
         val fourthDest = board.getTile(2, 4) ?: throw RuntimeException()
         board.makeAttack(thirdDest, fourthDest)
         assertTrue { fourthDest.currentPiece == startingPiece }
@@ -106,11 +105,11 @@ class PawnRulesTest {
         val startingTile = board.getTile(7, 3) ?: throw RuntimeException()
         val startingPiece = startingTile.currentPiece
         val firstDest = board.getTile(5, 3) ?: throw RuntimeException()
-        board.makeMove(startingTile, firstDest)
+        board.makeMoveWithoutCheckingMate(startingTile, firstDest)
         val secondDest = board.getTile(4, 3) ?: throw RuntimeException()
-        board.makeMove(firstDest, secondDest)
+        board.makeMoveWithoutCheckingMate(firstDest, secondDest)
         val thirdDest = board.getTile(3, 3) ?: throw RuntimeException()
-        board.makeMove(secondDest, thirdDest)
+        board.makeMoveWithoutCheckingMate(secondDest, thirdDest)
         val fourthDest = board.getTile(2, 4) ?: throw RuntimeException()
         board.makeAttack(thirdDest, fourthDest)
         val fifthDest = board.getTile(1, 5) ?: throw RuntimeException()

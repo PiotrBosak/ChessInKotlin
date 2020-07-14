@@ -33,12 +33,8 @@ class Tile(color: Color, column: Int, row: Int, val startingPiece: Piece?) {
 
     fun isEmpty(): Boolean = currentPiece == null
     fun hasPiece(): Boolean = currentPiece != null
-    fun hasStartingPiece() = currentPiece === startingPiece
+    fun hasMoved(): Boolean = currentPiece === startingPiece
 
-    companion object {
 
-        fun isRowAndColumnValid(row: Int, column: Int): Boolean = (row in 1..8 && column in 1..8).not()
-
-    }
 
 }

@@ -22,7 +22,7 @@ object PawnRules : Rules {
         val currentTile = board.getTile(row, column) ?: return null
         validatePiece(currentTile.currentPiece)
         val secondNextRow = if (currentTile.currentPiece!!.color == WHITE) 2 else -2
-        return if (currentTile.hasStartingPiece() && nextTwoTilesEmpty(currentTile,board))
+        return if (currentTile.hasMoved() && nextTwoTilesEmpty(currentTile,board))
             board.getTile(row + secondNextRow, column)
         else null
 
