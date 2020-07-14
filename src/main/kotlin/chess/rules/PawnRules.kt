@@ -14,22 +14,58 @@ object PawnRules : Rules {
     }
 
     override fun calculatePossibleAttacks(row: Int, column: Int, board: Board): List<Tile> {
-        return regularAttacks(row, column, board).filterNotNull()
-        //stil haven't added lePassant(maybe history of the game is needed)
+        return regularAttacks(row, column, board).filterNotNull() + listOfNotNull(lePassant(row, column, board))
+
     }
 
     private fun twoTileMove(row: Int, column: Int, board: Board): Tile? {
         val currentTile = board.getTile(row, column) ?: return null
         validatePiece(currentTile.currentPiece)
         val secondNextRow = if (currentTile.currentPiece!!.color == WHITE) 2 else -2
-        return if (currentTile.hasMoved() && nextTwoTilesEmpty(currentTile,board))
+        return if (currentTile.hasMoved() && nextTwoTilesEmpty(currentTile, board))
             board.getTile(row + secondNextRow, column)
         else null
 
     }
 
-    private fun lePassant(row: Int, column: Int): Tile? {
-        return null
+    private fun lePassant(row: Int, column: Int, board: Board): Tile? {
+        val currentTile = board.getTile(row, column) ?: return null
+        val tileToTheLeft = getTileToTheLeft(currentTile, board)
+        val tileToTheRight = getTileToTheRight(currentTile, board)
+        if (tileToTheLeft?.currentPiece != null &&
+                tileToTheLeft.currentPiece === board.recentlyMovedPiece &&
+                board.recentlyMovedPiece != null &&
+                board.recentlyMovedPiece is Pawn &&
+                (board.recentlyMovedPiece as Pawn).hasJustMovedByTwoTiles &&
+                board.recentlyMovedPiece!!.color != currentTile.currentPiece!!.color)
+            return if (currentTile.currentPiece!!.color == WHITE)
+                board.getTile(tileToTheLeft.row + 1, tileToTheLeft.column)
+            else
+                board.getTile(tileToTheLeft.row - 1, tileToTheLeft.column)
+        else if (tileToTheRight?.currentPiece != null &&
+                tileToTheRight.currentPiece === board.recentlyMovedPiece &&
+                board.recentlyMovedPiece != null &&
+                board.recentlyMovedPiece is Pawn &&
+                (board.recentlyMovedPiece as Pawn).hasJustMovedByTwoTiles &&
+                board.recentlyMovedPiece!!.color != currentTile.currentPiece!!.color)
+            return if (currentTile.currentPiece!!.color == WHITE)
+                board.getTile(tileToTheRight.row + 1, tileToTheRight.column)
+            else
+                board.getTile(tileToTheRight.row - 1, tileToTheRight.column)
+        else return null
+    }
+
+    private fun getTileToTheLeft(tile: Tile, board: Board): Tile? {
+        return if (tile.column == 1)
+            null
+        else board.getTile(tile.row, tile.column - 1)
+
+    }
+
+    private fun getTileToTheRight(tile: Tile, board: Board): Tile? {
+        return if (tile.column == 8)
+            null
+        else board.getTile(tile.row, tile.column + 1)
     }
 
     private fun regularMove(row: Int, column: Int, board: Board): Tile? {

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.lang.RuntimeException
 import kotlin.test.assertEquals
+import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
@@ -116,5 +117,51 @@ class PawnRulesTest {
         board.makeAttack(fourthDest, fifthDest)
         assertTrue { fifthDest.currentPiece == startingPiece }
     }
+
+    @Test
+    fun blackDoesLePassant() {
+        val blackStartingTile = board.getTile(7, 3) ?: throw RuntimeException()
+        val blackFirstDest = board.getTile(5, 3) ?: throw RuntimeException()
+        val blackSecondDest = board.getTile(4, 3) ?: throw RuntimeException()
+        val whiteStartingTile = board.getTile(2, 4) ?: throw RuntimeException()
+        val whiteDestTile = board.getTile(4, 4) ?: throw RuntimeException()
+        val blackThirdDest = board.getTile(3, 4) ?: throw RuntimeException()
+        board.makeMoveWithoutCheckingMate(blackStartingTile, blackFirstDest)
+        board.makeMoveWithoutCheckingMate(blackFirstDest, blackSecondDest)
+        board.makeMoveWithoutCheckingMate(whiteStartingTile, whiteDestTile)
+        board.makeAttack(blackSecondDest, blackThirdDest)
+
+    }
+
+    @Test
+    fun whenBlackPawnTriesLePassant_ButWhitePawnDidNotMoveByTwoTiles_ThrowException() {
+        val blackStartingTile = board.getTile(7, 3) ?: throw RuntimeException()
+        val blackFirstDest = board.getTile(5, 3) ?: throw RuntimeException()
+        val blackSecondDest = board.getTile(4, 3) ?: throw RuntimeException()
+        val whiteStartingTile = board.getTile(2, 4) ?: throw RuntimeException()
+        val whiteFirstDest = board.getTile(3, 4) ?: throw RuntimeException()
+        val whiteSecondDest = board.getTile(4, 4) ?: throw RuntimeException()
+        val blackThirdDest = board.getTile(3, 4) ?: throw RuntimeException()
+        board.makeMoveWithoutCheckingMate(blackStartingTile, blackFirstDest)
+        board.makeMoveWithoutCheckingMate(blackFirstDest, blackSecondDest)
+        board.makeMoveWithoutCheckingMate(whiteStartingTile, whiteFirstDest)
+        board.makeMoveWithoutCheckingMate(whiteFirstDest, whiteSecondDest)
+        assertFails { board.makeAttack(blackSecondDest, blackThirdDest) }
+    }
+
+    @Test
+    fun whitePawnDoesLePassant() {
+        val whiteStartingTile = board.getTile(2, 3) ?: throw RuntimeException()
+        val whiteFirstDestTile = board.getTile(4, 3) ?: throw RuntimeException()
+        val whiteSecondDestTile = board.getTile(5, 3) ?: throw RuntimeException()
+        val blackStartingTile = board.getTile(7, 4) ?: throw RuntimeException()
+        val blackFirstDest = board.getTile(5, 4) ?: throw RuntimeException()
+        val whiteThirdDest = board.getTile(6, 4) ?: throw RuntimeException()
+        board.makeMoveWithoutCheckingMate(whiteStartingTile, whiteFirstDestTile)
+        board.makeMoveWithoutCheckingMate(whiteFirstDestTile, whiteSecondDestTile)
+        board.makeMoveWithoutCheckingMate(blackStartingTile, blackFirstDest)
+        board.makeAttack(whiteSecondDestTile, whiteThirdDest)
+    }
+
 
 }
