@@ -55,7 +55,7 @@ class QueenRulesTest {
         val queenSecondDest = board.getTile(2, 7) ?: throw RuntimeException()
         board.makeMoveWithoutCheckingMate(pawnStartingTile, pawnDestMove)
         board.makeMoveWithoutCheckingMate(queenStartTile, queenFirstDest)
-        board.makeAttack(queenFirstDest, queenSecondDest)
+        board.makeAttackWithoutCheckingMate(queenFirstDest, queenSecondDest)
         val moves = queenRulesTest.calculatePossibleMoves(queenSecondDest.row, queenSecondDest.column, board)
         val attacks = queenRulesTest.calculatePossibleAttacks(queenSecondDest.row, queenSecondDest.column, board)
         assertEquals(9, moves.size)

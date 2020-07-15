@@ -12,23 +12,70 @@ class Board {
     var recentlyMovedPiece: Piece? = null
     fun getTile(row: Int, column: Int) = tiles.firstOrNull { it.row == row && it.column == column }
 
-
-    //maybe make makeMove and makeAttack return boolean so that if the move is not possible you return false,
-    //todo remember to add checking whether the move is legal in terms of mate
     @Throws(IllegalMoveException::class)
     fun makeMoveWithoutCheckingMate(startingTile: Tile, destinationTile: Tile) {//for testing purposes of valid moves
         val moves = getAppropriateMoves(startingTile)
         if (moves.contains(destinationTile).not())
             throw IllegalMoveException
-        movePieces(startingTile, destinationTile)
+        movePiecesWithoutCheckingMate(startingTile, destinationTile)
     }
 
+    @Throws(IllegalAttackException::class)
+    fun makeAttackWithoutCheckingMate(startingTile: Tile, destinationTile: Tile) {
+        val attacks = getAppropriateAttacks(startingTile)
+        if (attacks.contains(destinationTile).not())
+            throw IllegalAttackException
+        movePiecesAttackWithoutCheckingMate(startingTile, destinationTile)
+    }
+
+    @Throws(IllegalMoveException::class)
+    fun makeMove(startingTile: Tile, destinationTile: Tile) {
+        val moves = getAppropriateMoves(startingTile)
+        if (moves.contains(destinationTile).not())
+            throw IllegalMoveException
+        movePieces(startingTile, destinationTile)
+
+        //todo this will also check whether the move checks or mates, and whether the move is valid in terms of check
+        //todo also add validation in makeAttack method
+    }
+
+    @Throws(IllegalAttackException::class)
     fun makeAttack(startingTile: Tile, destinationTile: Tile) {
         val attacks = getAppropriateAttacks(startingTile)
         if (attacks.contains(destinationTile).not())
             throw IllegalAttackException
         movePiecesAttack(startingTile, destinationTile)
+    }
 
+    private fun movePieces(startingTile: Tile, destinationTile: Tile) {
+        when {
+            isMoveCastling(startingTile, destinationTile) -> doCastling(startingTile, destinationTile)
+            isPawnMovingByTwoTile(startingTile, destinationTile) -> makePawnsMoveByTwoTile(startingTile, destinationTile)
+            else -> {
+                destinationTile.currentPiece = startingTile.currentPiece
+                startingTile.currentPiece = null
+                if (CheckRules.isAllyKingCheckedAfterMove(this, destinationTile.currentPiece!!.color)) {
+                    startingTile.currentPiece = destinationTile.currentPiece
+                    destinationTile.currentPiece = null
+                    throw IllegalMoveException
+                }
+            }
+        }
+
+        recentlyMovedPiece = destinationTile.currentPiece
+        markingKingOrPawnOrRookTheyMoved(destinationTile)
+    }
+
+
+    private fun movePiecesAttackWithoutCheckingMate(startingTile: Tile, destinationTile: Tile) {
+        if (isAttackLePassant(startingTile, destinationTile))
+            moveLePassantWithoutCheckingCheck(startingTile, destinationTile)
+        else {
+            destinationTile.currentPiece = startingTile.currentPiece
+            startingTile.currentPiece = null
+            recentlyMovedPiece = destinationTile.currentPiece
+            markingKingOrPawnOrRookTheyMoved(destinationTile)
+        }
     }
 
     private fun movePiecesAttack(startingTile: Tile, destinationTile: Tile) {
@@ -37,9 +84,17 @@ class Board {
         else {
             destinationTile.currentPiece = startingTile.currentPiece
             startingTile.currentPiece = null
-            recentlyMovedPiece = destinationTile.currentPiece
-            markingKingOrPawnOrRookTheyMoved(destinationTile)
+            if (CheckRules.isAllyKingCheckedAfterMove(this, destinationTile.currentPiece!!.color)) {
+                startingTile.currentPiece = destinationTile.currentPiece
+                destinationTile.currentPiece = null
+                throw IllegalAttackException
+            }
+
+
         }
+        recentlyMovedPiece = destinationTile.currentPiece
+        markingKingOrPawnOrRookTheyMoved(destinationTile)
+
     }
 
     private fun isAttackLePassant(startingTile: Tile, destinationTile: Tile): Boolean {
@@ -60,24 +115,44 @@ class Board {
             getTile(destinationTile.row - 1, destinationTile.column) ?: throw RuntimeException()
         else
             getTile(destinationTile.row + 1, destinationTile.column) ?: throw RuntimeException()
+        val capturedPawn = capturedPawnTile.currentPiece
         destinationTile.currentPiece = startingTile.currentPiece
         startingTile.currentPiece = null
         capturedPawnTile.currentPiece = null
-
-
+        if (CheckRules.isAllyKingCheckedAfterMove(this, destinationTile.currentPiece!!.color)) {
+            capturedPawnTile.currentPiece = capturedPawn
+            startingTile.currentPiece = destinationTile.currentPiece
+            destinationTile.currentPiece = null
+            throw IllegalAttackException
+        }
     }
 
-    private fun movePieces(startingTile: Tile, destinationTile: Tile) {
+    private fun moveLePassantWithoutCheckingCheck(startingTile: Tile, destinationTile: Tile) {
+        val pawn = startingTile.currentPiece!! as Pawn
+        val capturedPawnTile: Tile = if (pawn.color == WHITE)
+            getTile(destinationTile.row - 1, destinationTile.column) ?: throw RuntimeException()
+        else
+            getTile(destinationTile.row + 1, destinationTile.column) ?: throw RuntimeException()
+        val capturedPawn = capturedPawnTile.currentPiece
+        destinationTile.currentPiece = startingTile.currentPiece
+        startingTile.currentPiece = null
+        capturedPawnTile.currentPiece = null
+    }
+
+
+    private fun movePiecesWithoutCheckingMate(startingTile: Tile, destinationTile: Tile) {
         when {
-            isMoveCastling(startingTile, destinationTile) -> doCastling(startingTile, destinationTile)
-            isPawnMovingByTwoTile(startingTile, destinationTile) -> makePawnByTwoTiles(startingTile, destinationTile)
+            isMoveCastling(startingTile, destinationTile) -> doCastlingWithoutCheckingMate(startingTile, destinationTile)
+            isPawnMovingByTwoTile(startingTile, destinationTile) -> makePawnByTwoTilesWithoutCheckingMate(startingTile, destinationTile)
             else -> {
                 destinationTile.currentPiece = startingTile.currentPiece
                 startingTile.currentPiece = null
                 markingKingOrPawnOrRookTheyMoved(destinationTile)
             }
         }
+
         recentlyMovedPiece = destinationTile.currentPiece
+
     }
 
     private fun isPawnMovingByTwoTile(startingTile: Tile, destinationTile: Tile): Boolean {
@@ -85,10 +160,11 @@ class Board {
     }
 
 
-    private fun makePawnByTwoTiles(startingTile: Tile, destinationTile: Tile) {
+    private fun makePawnByTwoTilesWithoutCheckingMate(startingTile: Tile, destinationTile: Tile) {
         destinationTile.currentPiece = startingTile.currentPiece
         startingTile.currentPiece = null
         (destinationTile.currentPiece as Pawn).hasJustMovedByTwoTiles = true
+
     }
 
 
@@ -108,6 +184,21 @@ class Board {
 
     }
 
+    private fun doCastlingWithoutCheckingMate(startingTile: Tile, destinationTile: Tile) {
+        val king = startingTile.currentPiece as King
+        king.hasMoved = true
+        val rookTile = getRookTile(destinationTile)
+        val rook = rookTile.currentPiece as Rook
+        rook.hasMoved = true
+        destinationTile.currentPiece = king
+        startingTile.currentPiece = null
+        val rookDest = getRookNewTile(destinationTile)
+        rookDest.currentPiece = rook
+        rookTile.currentPiece = null
+
+
+    }
+
     private fun doCastling(startingTile: Tile, destinationTile: Tile) {
         val king = startingTile.currentPiece as King
         king.hasMoved = true
@@ -119,6 +210,26 @@ class Board {
         val rookDest = getRookNewTile(destinationTile)
         rookDest.currentPiece = rook
         rookTile.currentPiece = null
+        if (CheckRules.isAllyKingCheckedAfterMove(this, destinationTile.currentPiece!!.color)) {
+            rookDest.currentPiece = null
+            destinationTile.currentPiece = null
+            rookTile.currentPiece = rook
+            startingTile.currentPiece = king
+            throw IllegalMoveException
+            //reversing the changes
+        }
+    }
+
+    private fun makePawnsMoveByTwoTile(startingTile: Tile, destinationTile: Tile) {
+        destinationTile.currentPiece = startingTile.currentPiece
+        startingTile.currentPiece = null
+        (destinationTile.currentPiece as Pawn).hasJustMovedByTwoTiles = true
+        if (CheckRules.isAllyKingCheckedAfterMove(this, destinationTile.currentPiece!!.color)) {
+            startingTile.currentPiece = destinationTile.currentPiece
+            destinationTile.currentPiece = null
+            (startingTile.currentPiece as Pawn).hasJustMovedByTwoTiles = false
+            throw IllegalMoveException
+        }
     }
 
 
@@ -160,7 +271,7 @@ class Board {
         }
     }
 
-    private fun getAppropriateAttacks(tile: Tile): List<Tile> {
+    fun getAppropriateAttacks(tile: Tile): List<Tile> {
         val piece = tile.currentPiece ?: throw RuntimeException("you try to move empty tile, shouldn't happen")
         return when (piece) {
             is Pawn -> PawnRules.calculatePossibleAttacks(tile.row, tile.column, this)

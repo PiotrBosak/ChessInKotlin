@@ -16,5 +16,7 @@ class Bishop(color: Color) : Piece(color)
 class Queen(color: Color) : Piece(color)
 class King(color: Color) : Piece(color) {
     var hasMoved = false
+    var isChecked = false
+    var isMated = false
 }
 

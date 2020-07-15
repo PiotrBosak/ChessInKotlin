@@ -82,7 +82,7 @@ class PawnRulesTest {
         val thirdDest = board.getTile(6, 1) ?: throw RuntimeException()
         board.makeMoveWithoutCheckingMate(secondDest, thirdDest)
         val fourthDest = board.getTile(7, 2) ?: throw RuntimeException()
-        board.makeAttack(thirdDest, fourthDest)
+        board.makeAttackWithoutCheckingMate(thirdDest, fourthDest)
         assertTrue { fourthDest.currentPiece == startingPiece }
     }
 
@@ -97,7 +97,7 @@ class PawnRulesTest {
         val thirdDest = board.getTile(3, 3) ?: throw RuntimeException()
         board.makeMoveWithoutCheckingMate(secondDest, thirdDest)
         val fourthDest = board.getTile(2, 4) ?: throw RuntimeException()
-        board.makeAttack(thirdDest, fourthDest)
+        board.makeAttackWithoutCheckingMate(thirdDest, fourthDest)
         assertTrue { fourthDest.currentPiece == startingPiece }
     }
 
@@ -112,9 +112,9 @@ class PawnRulesTest {
         val thirdDest = board.getTile(3, 3) ?: throw RuntimeException()
         board.makeMoveWithoutCheckingMate(secondDest, thirdDest)
         val fourthDest = board.getTile(2, 4) ?: throw RuntimeException()
-        board.makeAttack(thirdDest, fourthDest)
+        board.makeAttackWithoutCheckingMate(thirdDest, fourthDest)
         val fifthDest = board.getTile(1, 5) ?: throw RuntimeException()
-        board.makeAttack(fourthDest, fifthDest)
+        board.makeAttackWithoutCheckingMate(fourthDest, fifthDest)
         assertTrue { fifthDest.currentPiece == startingPiece }
     }
 
@@ -129,7 +129,7 @@ class PawnRulesTest {
         board.makeMoveWithoutCheckingMate(blackStartingTile, blackFirstDest)
         board.makeMoveWithoutCheckingMate(blackFirstDest, blackSecondDest)
         board.makeMoveWithoutCheckingMate(whiteStartingTile, whiteDestTile)
-        board.makeAttack(blackSecondDest, blackThirdDest)
+        board.makeAttackWithoutCheckingMate(blackSecondDest, blackThirdDest)
 
     }
 
@@ -146,7 +146,7 @@ class PawnRulesTest {
         board.makeMoveWithoutCheckingMate(blackFirstDest, blackSecondDest)
         board.makeMoveWithoutCheckingMate(whiteStartingTile, whiteFirstDest)
         board.makeMoveWithoutCheckingMate(whiteFirstDest, whiteSecondDest)
-        assertFails { board.makeAttack(blackSecondDest, blackThirdDest) }
+        assertFails { board.makeAttackWithoutCheckingMate(blackSecondDest, blackThirdDest) }
     }
 
     @Test
@@ -160,7 +160,7 @@ class PawnRulesTest {
         board.makeMoveWithoutCheckingMate(whiteStartingTile, whiteFirstDestTile)
         board.makeMoveWithoutCheckingMate(whiteFirstDestTile, whiteSecondDestTile)
         board.makeMoveWithoutCheckingMate(blackStartingTile, blackFirstDest)
-        board.makeAttack(whiteSecondDestTile, whiteThirdDest)
+        board.makeAttackWithoutCheckingMate(whiteSecondDestTile, whiteThirdDest)
     }
 
 
