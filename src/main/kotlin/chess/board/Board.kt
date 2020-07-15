@@ -1,5 +1,6 @@
 package chess.board
 
+import Color
 import Color.*
 import chess.board.exceptions.IllegalAttackException
 import chess.board.exceptions.IllegalMoveException
@@ -34,7 +35,10 @@ class Board {
         if (moves.contains(destinationTile).not())
             throw IllegalMoveException
         movePieces(startingTile, destinationTile)
-
+        if (CheckRules.isEnemyKingCheckedAfterMove(this, destinationTile.currentPiece!!.color)) {
+            val enemyKingColor = if (destinationTile.currentPiece!!.color == WHITE) BLACK else WHITE
+            markEnemyKingAsChecked(enemyKingColor)
+        }
         //todo this will also check whether the move checks or mates, and whether the move is valid in terms of check
         //todo also add validation in makeAttack method
     }
@@ -45,6 +49,16 @@ class Board {
         if (attacks.contains(destinationTile).not())
             throw IllegalAttackException
         movePiecesAttack(startingTile, destinationTile)
+        if (CheckRules.isEnemyKingCheckedAfterMove(this, destinationTile.currentPiece!!.color)) {
+            val enemyKingColor = if (destinationTile.currentPiece!!.color == WHITE) BLACK else WHITE
+            markEnemyKingAsChecked(enemyKingColor)
+        }
+    }
+
+    private fun markEnemyKingAsChecked(color: Color) {
+        val tile = tiles.first { it.currentPiece != null && it.currentPiece!! is King && it.currentPiece!!.color == color }
+        val king = tile.currentPiece!! as King
+        king.isChecked = true
     }
 
     private fun movePieces(startingTile: Tile, destinationTile: Tile) {
